@@ -239,6 +239,47 @@ module.exports = {
             .fail(function(err){
                 return res.json(err, 500);
             })
+    },
+
+    getChildrenTerms: function(req, res){
+
+        Q(Taxonomy.find({parent: req.param('id')}))
+            .then(function(terms){
+
+                if(!terms){
+                    return res.json({});
+                }else{
+                    return res.json(terms);
+                }
+
+                //return Taxonomy.find({parent: term.id});
+
+/*
+                var query = _.pluck(term_map, 'term');
+                console.log(query);
+
+                if(tags){
+                    return Taxonomy.find({
+                        id: query,
+                        enable_tagging: true
+                    })
+
+                }else{
+                    return Taxonomy.find({
+                        id: query,
+                        enable_tagging: false
+                    })
+
+                }
+*/
+
+
+            })
+            .fail(function(error){
+
+                return res.json(error, 500);
+
+            });
     }
 
 };

@@ -8,7 +8,6 @@ var fs = require("fs-extra");
 
 module.exports = {
 
-
     getDirectory: function(req, res){
 
         var path = config.base + '/' + req.param('files_path');
@@ -72,7 +71,6 @@ module.exports = {
         })
 
     }
-
 
 };
 

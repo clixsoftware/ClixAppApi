@@ -13,18 +13,9 @@ module.exports = _.merge(_.cloneDeep(dataModel), {
 
     attributes: {
 
-        attachments: {
-            type: 'json'
-        },
-
-        content_type: {
-            type: 'string'
-        },
-
         parent_application: {   //parent application where the item was created
             type: 'integer'
         },
-
         parent_application_alias: {
             type: 'string'
         },
@@ -33,16 +24,15 @@ module.exports = _.merge(_.cloneDeep(dataModel), {
            type: 'string'
         },
 
+        feature_alias: {
+            type: 'string'
+        }
+        /*,
+
         path: { //  /sites/news/category
             type: 'string'
-        },
+        }*/
 
-        categories: {
-            type: 'array'
-        },
-        tags: {
-            type: 'array'
-        }
 
     }
 

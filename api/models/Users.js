@@ -16,6 +16,11 @@ module.exports = _.merge(_.cloneDeep(appItemModel), {
 
     attributes: {
 
+    content_type:{
+        type: 'string',
+        defaultsTo: 'account'
+    },
+
      email: {
             type: 'email',
             required: true,
@@ -179,8 +184,8 @@ module.exports = _.merge(_.cloneDeep(appItemModel), {
         Users.update({
             id: user.id
         }, {
-            manager_url: user.manager_url.replace('{id}', user.id),
-            edit_url:  user.edit_url.replace('{id}', user.id)
+            admin_path: user.admin_path.replace('{id}', user.id),
+            path:  user.path.replace('{id}', user.id)
         }, function(err, app){
             //if error
             if(err) return cb(err);
@@ -189,7 +194,8 @@ module.exports = _.merge(_.cloneDeep(appItemModel), {
         });
 
 
-    }/*,
+    }
+    /*,
 
     beforeUpdate: function ( valuesToUpdate, cb ) {
         cb();

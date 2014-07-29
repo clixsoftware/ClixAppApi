@@ -13,100 +13,48 @@ var Q = require('q');
 
 module.exports = _.merge(_.cloneDeep(contentModel), {
 
+    tableName: 'content',
+
     attributes: {
 
         content_type: {
             type: 'string',
-            enums: ['channel', 'page'],
-            defaultsTo: 'page'
+            defaultsTo: 'News Post'
         },
 
-        approved_by: {
-            type: 'integer'
-        },
-
-        title: {
-
+        description: {
             type: 'string',
-            required: true
+            required: 'true'
         },
 
-        published_status: function () {
-            if (this.status & HelperService.postStatus.published) {
-                return 'Published';
-            }
-
-            return 'Waiting';
+        short_title: {
+            type: 'string',
+            required: 'true'
         },
 
-
-        buildLinks: function () {
-
-            this.urls = {
-                edit: {
-                    href: this.path + '/edit',
-                    title: 'Edit Feature',
-                    description: 'Click to edit this feature'
-                },
-
-                show: {
-                    href: this.path + '/index.html',
-                    title: 'Feature Manager Home',
-                    description: 'Go to directory manager home'
-                }
-            };
-
-
-            return;
-
-
-        },
-
-        getMedia: function(){
-
-            return Q(Mediamaps.findOne({
-                object_id: this.uuid
-            })).then(function(success){
-
-                return success;
-            });
-
-        },
-
-
-        toJSON: function () {
-
-
-            this.buildLinks();
-           // console.log(JSON.stringify(this.getMedia()));
-
-            //console.log(JSON.stringify(this.media));
-
-            var obj = this.toObject();
-
-            return obj;
-
+        buildPath: function() {
+            this.path =  '/' + this.parent_application_feature + '/'  + this.parent_application_alias + '/' + this.feature_alias + '/' +  this.id + '-' +   this.title.toLowerCase().split(' ').join('-');;
         }
-
-
 
     },
 
     // Lifecycle Callbacks
     beforeCreate: function (post, next) {
 
-
         Applications.findOne(post.parent_application)
+
             .populate('parent_application_feature')
+
             .then(function (app) {
 
                 console.log('building post informatioin');
 
-                var mDate = moment().format('YYYY/MM/DD');
+              //  var mDate = moment().format('YYYY/MM/DD');
 
-                post.path = app.path + '/{id}/' + post.short_title.toLowerCase().split(' ').join('-');
-                post.admin_path = app.admin_path + "/posts/{id}";
+              //  post.path = app.path + '/{id}/' + post.short_title.toLowerCase().split(' ').join('-');
+              //  post.admin_path = app.admin_path + "/posts/{id}";
 
+                post.feature_alias = 'news';
                 post.parent_application_alias = app.alias;
                 post.parent_application_feature = app.parent_application_feature.application_alias;
 
@@ -122,7 +70,7 @@ module.exports = _.merge(_.cloneDeep(contentModel), {
 
     afterCreate: function (newPost, next) {
 
-        console.log('inside of after create for the news post');
+/*        console.log('inside of after create for the news post');
 
         Newspost.update({
             id: newPost.id
@@ -133,7 +81,7 @@ module.exports = _.merge(_.cloneDeep(contentModel), {
             if (err) return next(err);
 
              next();
-        });
+        });*/
 
     }
 

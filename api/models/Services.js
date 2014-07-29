@@ -5,16 +5,16 @@
  * @docs        :: http://sailsjs.org/#!documentation/models
  */
 
-var appItemModel = require('../services/model/appItemModel');  //inherit from the base model
+var contentModel = require('../services/model/contentModel');  //inherit from the base model
 var _ = require('lodash');
 var uuid = require('uuid-v4');
 var moment = require('moment');
 
-module.exports = _.merge(_.cloneDeep(appItemModel), {
+module.exports = _.merge(_.cloneDeep(contentModel), {
 
     attributes: {
         //form to be used
-        content: {
+ /*       content: {
           type: 'string'
         },
 
@@ -74,7 +74,7 @@ module.exports = _.merge(_.cloneDeep(appItemModel), {
             required: true
         },
 
-        buildLinks: function () {
+ */       buildLinks: function () {
 
             this.urls = {
                 edit: {
@@ -137,24 +137,6 @@ console.log(post.parent_application);
 
             });
         // Create new user password before create
-
-    },
-
-    afterCreate: function (newPost, next) {
-
-        console.log('inside of after create for the news post');
-
-        Services.update({
-            id: newPost.id
-        }, {
-            admin_path: newPost.admin_path.replace('{id}', newPost.id),
-            path: newPost.path.replace('{id}', newPost.id)
-        }, function (err, success) {
-
-            if (err) return next(err);
-
-             next();
-        });
 
     }
 

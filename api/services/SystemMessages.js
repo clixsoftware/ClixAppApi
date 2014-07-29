@@ -92,7 +92,7 @@ module.exports = {
 
     method_not_allowed_error: function(allowedMethods){
         return {
-            code: 'id_missing_err',
+            code: 'method_not_allowed_error',
             message: 'Only the following method(s) allowed ' + allowedMethods
         }
     },
@@ -104,10 +104,31 @@ module.exports = {
         status: 405
     },
 
+    validationErrors:{
+        code: 'validation_errors',
+        message: 'There were validation errors.',
+        errors: {},
+        status: 405
+    },
+
 
     profile_required_err : {
         code: 'profile_required_err',
         message: 'Profile required.'
+    },
+
+    required_field_err : {
+        code: 'required_field_err',
+        field: 'required_field_err',
+        message: '%s  is required'
+    },
+
+    requiredFieldError: function(field){
+        return {
+            code: 'required_field_err',
+            field: field,
+            message:  field + ' is required'
+        }
     },
 
     title_err: {

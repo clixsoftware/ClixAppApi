@@ -12,68 +12,14 @@ var moment = require('moment');
 
 module.exports = _.merge(_.cloneDeep(contentModel), {
 
+    tableName: 'content',
+
     attributes: {
 
-
-        approved_by: {
-            type: 'integer'
-        },
-
-        content_type: {
+       content_type: {
             type: 'string',
             enum: ['Blog Post'],
             defaultsTo: 'Blog Post'
-        },
-
-        is_featured: {
-            type: 'boolean',
-            defaultsTo: false
-        },
-
-        title: {
-
-            type: 'string',
-            required: true
-        },
-
-        published_status: function () {
-            if (this.status & HelperService.postStatus.published) {
-                return 'Published';
-            }
-
-            return 'Waiting';
-        },
-
-        buildLinks: function () {
-
-            this.urls = {
-                edit: {
-                    href: this.path + '/edit',
-                    title: 'Edit Feature',
-                    description: 'Click to edit this feature'
-                },
-
-                show: {
-                    href: this.path + '/index.html',
-                    title: 'Feature Manager Home',
-                    description: 'Go to directory manager home'
-                }
-            };
-
-
-            return;
-
-
-        },
-
-        toJSON: function () {
-
-
-            this.buildLinks();
-            var obj = this.toObject();
-
-            return obj;
-
         }
 
 
@@ -107,23 +53,7 @@ module.exports = _.merge(_.cloneDeep(contentModel), {
 
         // Create new user password before create
 
-    },
-
-    afterCreate: function (newPost, next) {
-
-        console.log('inside of after create for the news post');
-
-        Blogposts.update({
-            id: newPost.id
-        }, {
-            admin_path: newPost.admin_path.replace('{id}', newPost.id),
-            path: newPost.path.replace('{id}', newPost.id)
-        }, function (err, success) {
-            if (err) return next(err);
-
-             next();
-        });
-
     }
+
 
  });

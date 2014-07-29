@@ -37,7 +37,73 @@ module.exports.routes = {
   // against Sails route blueprints.  See `config/blueprints.js` for configuration options
   // and examples.
 
+    //CONTENT
 
+    //get all posts, includes search criteria
+    'get /api/v1/content': {
+        controller: 'content',
+        action: 'find'
+    },
+
+    //create a new post
+    'post /api/v1/content': {
+        controller: 'content',
+        action: 'create'
+    },
+
+    //create a new post
+    'get /api/v1/content/search': {
+        controller: 'content',
+        action: 'search'
+    },
+
+    //add taxonomy tags  to a item
+    'post  /api/v1/content/:id/tags': {
+        controller: 'content',
+        action: 'addTags'
+    },
+
+    //add taxonomy terms to a item
+    'post  /api/v1/content/:id/terms': {
+        controller: 'content',
+        action: 'addTerms'
+    },
+
+    //get posts for application with :id, includes search criteria
+    'get /api/v1/content/apps/:parent_application/posts': {
+        controller: 'content',
+        action: 'find'
+    },
+
+    //get single post with the :postId
+    'get /api/v1/content/:id': {
+        controller: 'content',
+        action: 'find'
+    },
+
+    //update post with the :postId
+    'put  /api/v1/content/:id': {
+        controller: 'content',
+        action: 'update'
+    },
+
+
+
+    //IMAGES
+    //install the feature
+    'post /api/v1/images': {
+        controller: 'images',
+        action: 'upload'
+    },
+
+    //AUTHENTICATION
+    //install the FEATURE
+    'post /api/v1/auth/signup': {
+        controller: 'auth',
+        action: 'signup'
+    },
+
+    //FILES
     // get the feature information
     'get /api/v1/files/dir/:files_path': {
         controller: 'files',
@@ -131,59 +197,208 @@ module.exports.routes = {
         controller: 'patients',
         action: 'getEntriesByAlias'
     },
+
+
     //NEWS MANAGER
 
-    //install the feature
-    'post /api/v1/news/feature': {
-       controller: 'news',
-       action: 'installFeature'
+    //get all posts, includes search criteria
+    'get /api/v1/news/posts': {
+        controller: 'news',
+        action: 'findPosts'
     },
 
-    // get the feature information
-    'get /api/v1/news/feature': {
-        controller: 'news',
-        action: 'getFeature'
+    //create a new post
+    'post /api/v1/news/posts': {
+    controller: 'news',
+    action: 'createPost'
     },
 
-    //get all the posts for the news id
-    'get /api/v1/news/:id/posts': {
+    //create a new post
+    'get /api/v1/news/posts/search': {
         controller: 'news',
-        action: 'getPosts'
+        action: 'searchPosts'
+    },
+    //get single post with the :postId
+    'get /api/v1/news/posts/:id': {
+        controller: 'news',
+        action: 'findPosts'
     },
 
-    //create a new post for the id
-    'post /api/v1/news/:id/posts': {
+    //update post with the :postId
+    'put  /api/v1/news/posts/:id': {
         controller: 'news',
+        action: 'updatePost'
+    },
+
+    //create a new application
+    'post /api/v1/news': {
+        controller: 'news',
+        action: 'create'
+    },
+
+    //feature
+    //get the feature manager
+    'get /api/v1/news/manager': {
+        controller: 'news',
+        action: 'getManager'
+    },
+
+    //install the feature manager
+    'post /api/v1/news/manager': {
+        controller: 'news',
+        action: 'install'
+    },
+
+    //get posts for application with :id, includes search criteria
+    'get /api/v1/news/:parent_application/posts': {
+        controller: 'news',
+        action: 'findPosts'
+    },
+
+    //get application with the :id
+    'get /api/v1/news/:id': {
+        controller: 'news',
+        action: 'find'
+    },
+
+    //Calendar MANAGER
+
+    //get all posts, includes search criteria
+    'get /api/v1/calendar/posts': {
+        controller: 'calendar',
+        action: 'findPosts'
+    },
+
+    //create a new post
+    'post /api/v1/calendar/posts': {
+        controller: 'calendar',
         action: 'createPost'
     },
 
-    //Get Posts using the Feature Alias 'sites' and the Application Alias 'default'
-    'get /api/v1/news/posts/:feature_alias/:application_alias': {
+    //get single post with the :postId
+    'get /api/v1/calendar/posts/:id': {
+        controller: 'calendar',
+        action: 'findPosts'
+    },
+
+    //update post with the :postId
+    'put  /api/v1/calendar/posts/:id': {
+        controller: 'calendar',
+        action: 'updatePost'
+    },
+
+    //create a new application
+    'post /api/v1/calendar': {
+        controller: 'calendar',
+        action: 'create'
+    },
+
+    //feature
+    //get the feature manager
+    'get /api/v1/calendar/manager': {
+        controller: 'calendar',
+        action: 'getManager'
+    },
+
+    //install the feature manager
+    'post /api/v1/calendar/manager': {
+        controller: 'calendar',
+        action: 'install'
+    },
+
+    //get posts for application with :id, includes search criteria
+    'get /api/v1/calendar/:parent_application/posts': {
+        controller: 'calendar',
+        action: 'findPosts'
+    },
+
+    //get application with the :id
+    'get /api/v1/calendar/:id': {
+        controller: 'calendar',
+        action: 'find'
+    },
+
+    //CLASSIFIEDS MANAGER
+
+    //get all posts, includes search criteria
+    'get /api/v1/classifieds/posts': {
+        controller: 'classifieds',
+        action: 'findPosts'
+    },
+
+    //create a new post
+    'post /api/v1/classifieds/posts': {
+        controller: 'classifieds',
+        action: 'createPost'
+    },
+
+    'put /api/v1/classifieds/posts': {
+        controller: 'classifieds',
+        action: 'updatePost'
+    },
+
+
+    //create a new post
+    'get /api/v1/classifieds/posts/search': {
+        controller: 'classifieds',
+        action: 'searchPosts'
+    },
+
+
+    //get single post with the :postId
+    'get /api/v1/classifieds/posts/:id': {
+        controller: 'classifieds',
+        action: 'findPosts'
+    },
+
+    //update post with the :postId
+      'put  /api/v1/classifieds/posts/:id': {
+        controller: 'classifieds',
+        action: 'updatePost'
+    },
+
+    //create a new application
+    'post /api/v1/classifieds': {
+        controller: 'classifieds',
+        action: 'create'
+    },
+
+    //feature
+    //get the feature manager
+    'get /api/v1/classifieds/manager': {
+        controller: 'classifieds',
+        action: 'getManager'
+    },
+
+    //install the feature manager
+    'post /api/v1/classifieds/manager': {
+        controller: 'classifieds',
+        action: 'install'
+    },
+
+    //get posts for application with :id, includes search criteria
+    'get /api/v1/classifieds/:parent_application/posts': {
+        controller: 'classifieds',
+        action: 'findPosts'
+    },
+
+    //get application with the :id
+    'get /api/v1/classifieds/:id': {
+        controller: 'classifieds',
+        action: 'find'
+    },
+
+/*
+
+
+
+
+    //delete post with the :postId
+    'delete /api/v1/news/posts/:postId': {
         controller: 'news',
-        action: 'getPostsByAlias'
-    },
+        action: 'deletePost'
+    },*/
 
-    //NEWSPOST MANAGER
-
-
-    //Add a category to the how do I post
-    'get /api/v1/newspost/tracker/:id': {
-        controller: 'newspost',
-        action: 'getById'
-    },
-
-
-    //install the feature
-    'put /api/v1/newspost/:id/category': {
-        controller: 'newspost',
-        action: 'addCategory'
-    },
-
-    //Get Posts using the Feature Alias 'sites' and the Application Alias 'default'
-    'get /api/v1/newspost/featured/:feature_alias/:application_alias': {
-        controller: 'newspost',
-        action: 'getFeatured'
-    },
     //HOW DO I  MANAGER
 
     //install the feature
@@ -247,6 +462,7 @@ module.exports.routes = {
         controller: 'howdois',
         action: 'getMostActive'
     },
+
     //TAXONOMY MANAGER
 
     //install the feature
@@ -262,46 +478,27 @@ module.exports.routes = {
     },
 
     //get all the posts for the news id
-    'get /api/v1/taxonomy/:id/posts': {
+    'get /api/v1/taxonomy/:id/terms': {
         controller: 'taxonomy',
-        action: 'getPosts'
+        action: 'getChildrenTerms'
     },
 
-    //create a new post for the id
-    'post /api/v1/taxonomy/:id/posts': {
-        controller: 'taxonomy',
-        action: 'createPost'
-    },
-
-    //Get Posts using the Feature Alias 'sites' and the Application Alias 'default'
-    'get /api/v1/taxonomy/posts/:feature_alias/:application_alias': {
-        controller: 'taxonomy',
-        action: 'getPostsByAlias'
-    },
-
-    //Add a term to an object
-    'put /api/v1/taxonomy/terms/:id': {
-        controller: 'taxonomy',
-        action: 'addTermToObject'
-    },
-
-    //Get object terms
-    'get /api/v1/taxonomy/object/:id': {
-        controller: 'taxonomy',
-        action: 'getObjectTerms'
-    },
-
-    //Get object terms
-    'get /api/v1/taxonomy/app/:id': {
-        controller: 'taxonomy',
-        action: 'getAppTerms'
-    },
 
     //APPLICATIONS MANAGER
 
     'get /api/v1/applications/app/:feature_id/:alias': {
         controller: 'applications',
         action: 'getApplication'
+    },
+
+    'post  /api/v1/applications/:id/tags': {
+        controller: 'applications',
+        action: 'addTags'
+    },
+
+    'post  /api/v1/applications/:id/terms': {
+        controller: 'applications',
+        action: 'addTerms'
     },
 
     // SITES MANAGER
@@ -377,12 +574,6 @@ module.exports.routes = {
         action: 'createProject'
     },
 
-    //Get Posts using the Feature Alias 'sites' and the Application Alias 'default'
-    'get /api/v1/news/projects/:feature_alias/:application_alias': {
-        controller: 'projects',
-        action: 'getProjectsByAppAlias'
-    },
-
     //SUPPORT MANAGER
 
     //install the feature
@@ -421,46 +612,19 @@ module.exports.routes = {
         action: 'createTicket'
     },
 
+    //update the ticket
+    'put /api/v1/support/tickets': {
+        controller: 'support',
+        action: 'updateTicket'
+    },
+
     //get all the tickets for the support application
     'get /api/v1/support/services/:id': {
         controller: 'support',
         action: 'getService'
     },
 
-    //CALENDAR EVENTS MANAGER
-
-    //install the feature
-    'post /api/v1/calendar/feature': {
-        controller: 'calendar',
-        action: 'installFeature'
-    },
-
-    // get the feature information
-    'get /api/v1/calendar/feature': {
-        controller: 'calendar',
-        action: 'getFeature'
-    },
-
-    //get all the posts for the news id
-    'get /api/v1/calendar/:id/entries': {
-        controller: 'calendar',
-        action: 'getPosts'
-    },
-
-    //create a new post for the id
-    'post /api/v1/calendar/:id/entries': {
-        controller: 'calendar',
-        action: 'createPost'
-    },
-
-    //GET events by feature and parent
-    'get /api/v1/events/parent/:feature/:app_alias': {
-        controller: 'events',
-        action: 'getByFeatureParent'
-    },
-
-
-    //BLOGS MANAGER
+     //BLOGS MANAGER
 
     //install the feature
     'post /api/v1/blogs/feature': {

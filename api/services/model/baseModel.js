@@ -15,21 +15,30 @@ module.exports = {
             type: 'string'
         },
 
-/*        edit_url: { //url to edit the record in the administration module'
+        /* admin_path: {    //url to the administration module
             type: 'string'
-        },
- */
-        admin_path: {    //url to the administration module
-            type: 'string'
-        },
+        },*/
 
         sort_ordinal: {
             type: 'integer',
             defaultsTo: 1
         },
 
+        custom_fields: {
+            type: 'json'
+        },
+
+        //Value that specifies the status of a list if it is moderated. 0=published; 2=scheduled; 1=expired, 4=archived.
+        status: {
+            type: 'integer'
+        },
+
         hostName: function(){
-            return 'http://intranet:3100/api/v1/';
+            return sails.config.apiServerUrl
+        },
+
+        clientServer: function(){
+            return sails.config.clientServerUrl
         }
 
     }

@@ -5,23 +5,54 @@
  * @docs        :: http://sailsjs.org/#!documentation/controllers
  */
 
-module.exports = {
+var actionUtil = require('../../node_modules/sails/lib/hooks/blueprints/actionUtil');
+var util = require('util');
 
-    //Get all 'News' Applications
+module.exports = {
+    //get all applications
     index: function ( req, res ) {
 
         Applications.find({
             app_alias: _moduleData.application_alias
-        }).done(function(err, success){
+        }).exec(function(err, success){
 
-                if(err) return res.json(err, 500);
+            if(err) return res.json(err, 500);
 
-                return res.json(success);
-            })
+            return res.json(success);
+        })
     },
 
-    //Install the feature
-    installFeature: function ( req, res ) {
+    //get application with the :id
+    find: function(req, res){
+        Applications.findOne(req.param('id'))
+            .then(function(app){
+
+                return res.json(app);
+            });
+    },
+
+    //create a new application
+    create: function(req, res){
+        return res.json({
+            message: 'To be implemented'
+        })
+    },
+
+    //get the feature manager
+    getManager: function(req, res){
+
+        Features.findOne({
+            application_alias: _moduleData.application_alias
+        }).exec(function(err, success){
+
+            if(err) return res.json(err, 500);
+
+            return res.json(success);
+        })
+    },
+
+    //install the feature manager
+    install: function ( req, res ) {
         var errors = [];
 
         Features.create(_moduleData)
@@ -31,122 +62,111 @@ module.exports = {
             .fail(function(error){
                 return res.json(error, 500);
             });
+    },
 
+    //create a new post
+    createPost: function(req, res){
 
+        var Model = Newspost;
+
+        // Create data object (monolithic combination of all parameters)
+        // Omit the blacklisted params (like JSONP callback param, etc.)
+        var data = actionUtil.parseValues(req);
+
+        /*        if(req.user && req.user.id){
+         data.creator = req.user.id;
+         }*/
+
+        // Create new instance of model using data from params
+        Model.create(data).exec(function created (err, newInstance) {
+            if (err) return res.negotiate(err);
+
+            res.status(201);
+            res.json(newInstance.toJSON());
+        });
 
     },
 
-    //get the feature information
-    getFeature: function(req, res){
-
-        Features.findOne({
-            application_alias: _moduleData.application_alias
-        }).done(function(err, success){
-
-                if(err) return res.json(err, 500);
-
-                return res.json(success);
-            })
-    },
-
-    //get posts for an application using the 'Id'
-    getPosts: function(req, res){
-
-        Events.find({
-            parent_application: req.param('id')
-        }).done(function(err, posts){
-
-                if(err) return res.json(err, 500);
-
-                if(posts){
-
-                    //get the category that goes with it
-                    //                    success.getCategories();
-
-                    var postsLength = posts.length - 1;
-
-                    posts.forEach(function(post, i) {
-
-                        console.log('item - ' + i);
-
-                        Mediamaps.findOne({
-                            object_id: post.uuid
-                        }).exec(function ( err, media ) {
-
-                            if(media){
-                                posts[i].media = media;
-                            }else{
-                                posts[i].media = {};
-                            }
+     findPosts: function findRecords (req, res) {
 
 
-                            // send request in last array item
-                            if (i >= postsLength) {
+        // Look up the model
+        var Model = CalendarEvent;
 
-                                // console.log(models);
-                                return res.json( posts);
+        // var modelName = req.options.model || req.options.controller;
 
-                            }
+        var paging = {
+            limit: actionUtil.parseLimit(req),
+            skip:   actionUtil.parseSkip(req)
+        };
 
-                        });
-                    });
+        // Lookup for records that match the specified criteria
+        var query = Model.find()
+            .where( actionUtil.parseCriteria(req) )
+            .limit( actionUtil.parseLimit(req) )
+            .skip( actionUtil.parseSkip(req) )
+            .sort( actionUtil.parseSort(req) );
 
+        // TODO: .populateEach(req.options);
+        //query = actionUtil.populateEach(query, req.options);
 
-                }else{
-                    return res.json({}, 404);
+        query.exec(function found(err, matchingRecords) {
+            if (err) return res.serverError(err);
+
+            // Only `.watch()` for new instances of the model if
+            // `autoWatch` is enabled.
+            if (req._sails.hooks.pubsub && req.isSocket) {
+
+                Model.subscribe(req, matchingRecords);
+                if (req.options.autoWatch) {
+                    Model.watch(req);
                 }
 
+                // Also subscribe to instances of all associated models
+                _.each(matchingRecords, function (record) {
+                    actionUtil.subscribeDeep(req, record);
+                });
 
+            }
 
+            //Check if only requesting one record
+            if(!req.param('id')){
+                //Get the Count of the records
+                Model.count(actionUtil.parseCriteria(req)).exec(function (err, found) {
+                    var ret = {
+                        models: matchingRecords,
+                        total: found,
+                        page: paging.skip ? paging.skip + 1 : 0,
+                        limit: paging.limit ? paging.limit : 0
+                    };
+                    return res.json(ret);
 
-            });
-    },
+                });
+            }else{
 
-    //create a new post for an application
-     createPost: function(req, res){
+                if(matchingRecords){
+                    var post = matchingRecords[0];
 
-        var  post_record = {};
-         post_record.title = req.param('title');
-         post_record.description = req.param('description');
-         post_record.location = req.param('location');
-         post_record.organizer_name = req.param('organizer_name');
-         post_record.organizer_description = req.param('organizer_description');
-         post_record.start_date = req.param('start_date');
-         post_record.end_date = req.param('end_date');
-         post_record.content = req.param('content');
+                    var viewCount = post.views + 1;
+                    CalendarEvent.update({
+                        id: post.id
+                    }, {
+                        views: viewCount
+                    }).exec(function(err, posts){
+                        return res.json(posts[0]);
+                    });
 
-        //auto
-         post_record.parent_application = req.param('id');
+                }else{
+                    return res.json({
+                        message: 'Record not found'
+                    }, 404);
+                }
 
-         console.log(post_record);
+            }
+        });
 
-
-        Events.create(post_record)
-            .then(function(created_record){
-                return res.json(created_record, 201);
-            })
-            .fail(function(error){
-                return res.json(error, 500);
-            });
-
-
-    },
-
-    //get posts by the feature and the application alias
-    getPostsByAlias: function(req, res){
-
-        Newspost.find({
-            parent_application_alias: req.param('application_alias'),
-            parent_application_feature:  req.param('feature_alias')
-        }).done(function(err, success){
-
-                if(err)  return res.json(err, 500);
-
-                return res.json(success);
-            })
     }
-
-};
+}
 
 var _moduleData = {
     title: 'Calendar Manager',

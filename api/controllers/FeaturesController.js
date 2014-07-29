@@ -245,7 +245,7 @@ module.exports = {
            application_alias: req.param('id')
        }).exec(function(err, success){
 
-               console.log(success);
+               //console.log(success);
 
                if(err) return res.json(err, 500);
 

@@ -29,10 +29,6 @@ module.exports = _.merge(_.cloneDeep(appItemModel), {
             type: 'string'
         },
 
-        custom_fields: {
-            type: 'json'
-        },
-
         due_date: {
             type: 'datetime'
         },

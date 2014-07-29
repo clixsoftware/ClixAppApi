@@ -11,15 +11,27 @@ module.exports = _.merge(_.cloneDeep(baseModel), {
 
     attributes: {
 
-        created_by: {
+        content_type: {
+            type: 'string'
+        },
+
+        author: {
             model: 'users'
         },
 
-        deleted_by: {
+        approver:  {
+            type: 'integer'
+        },
+
+        editor: {
             model: 'users'
         },
 
-        owned_by: {
+        owner: {
+            model: 'users'
+        },
+
+        deletor: {
             model: 'users'
         },
 
@@ -27,7 +39,7 @@ module.exports = _.merge(_.cloneDeep(baseModel), {
             type: 'datetime'
         },
 
-        is_deleted: {
+        deleted: {
             type: 'boolean',
             defaultsTo: false
         },
@@ -37,9 +49,17 @@ module.exports = _.merge(_.cloneDeep(baseModel), {
             uuidv4: true
         },
 
-        updated_by: {
-            model: 'users'
+        attachments: {
+            type: 'json'
+        },
+
+        categories: {
+            type: 'array'
+        },
+        tags: {
+            type: 'array'
         }
+
 
     }
 

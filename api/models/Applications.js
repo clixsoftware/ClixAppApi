@@ -1,7 +1,7 @@
 /**
- * App.js
+ * Application.js
  *
- * @description :: TODO: You might write a short summary of how this model works and what it represents here.
+ * @description :: This represents the applications that are in the system
  * @docs        :: http://sailsjs.org/#!documentation/models
  */
 
@@ -15,6 +15,7 @@ module.exports = _.merge(_.cloneDeep(dataModel), {
 
     attributes: {
 
+
         alias: {    //e.g. 'corporate' as in http://intranet/sites/corporate/news
             type: 'string',
             required: true
@@ -23,7 +24,6 @@ module.exports = _.merge(_.cloneDeep(dataModel), {
         app_alias: {
             type: 'string'
         },
-
 
         features_enabled: {
             type: 'integer',
@@ -44,7 +44,6 @@ module.exports = _.merge(_.cloneDeep(dataModel), {
             defaultsTo: false
         },
 
-
         last_activity_date: {
             type: 'datetime'
         },
@@ -63,9 +62,8 @@ module.exports = _.merge(_.cloneDeep(dataModel), {
             //required: true
         },
 
-        path: {
-            type: 'string',  //  '/sites/corporate/news
-            unique: true
+        node_path: {
+            type: 'array'
         },
 
         view_template: {
@@ -83,10 +81,6 @@ module.exports = _.merge(_.cloneDeep(dataModel), {
             defaultsTo: 'default'
         },
 
-        level: {
-            type: 'string'
-        },
-
         privacy_enabled: {
             type: 'boolean',
             defaultsTo: false
@@ -102,13 +96,30 @@ module.exports = _.merge(_.cloneDeep(dataModel), {
             defaultsTo: false
         },
 
-        status: {
-            type: 'string',
-            defaultsTo: 'active',
-            enum: ['deleted', 'inactive', 'active']
+        read_security: {
+            type: 'integer',
+            defaultsTo: 0
         },
 
+        write_security: {
+            type: 'integer',
+            defaultsTo: 0
+        },
 
+        anonymous_permask: {
+            type: 'integer',
+            defaultsTo: 0
+        },
+
+        flags: {
+            type: 'integer',
+            defaultsTo: 0
+        },
+
+        item_count: {
+            type: 'integer',
+            defaultsTo: 0
+        },
 
         loadFeatures: function () {
 
@@ -208,6 +219,8 @@ module.exports = _.merge(_.cloneDeep(dataModel), {
 
         buildLinks: function () {
 
+            this.path =  '/' + this.app_alias  + '/'  +  this.alias;
+
             var url = '/admin/features/feature/' + this.id;
 
             this.urls = {
@@ -242,6 +255,70 @@ module.exports = _.merge(_.cloneDeep(dataModel), {
 
         },
 
+        buildTaxonomy: function(){
+
+            this.taxonomy = {};
+
+            this.taxonomy.categories = [];
+            this.taxonomy.tags = [];
+
+            if(this.categories){
+
+                var collection;
+
+                try{
+                     collection = JSON.parse(this.categories);
+                }catch(err){
+                    collection  =  this.categories;
+                }finally {
+
+                    var arrCol = [];
+
+                    _.each(collection, function(tag){
+                        var token = tag.split(';#');
+                      //  console.log(token);
+                        var id = token[0].trim();
+                        var info = token[1].split('|');
+                        var title = info[0];
+                        var uuid = info[1];
+                        var url = id + '-' + title.replace(/ /g, '-');
+
+                        arrCol.push({
+                            id: id,
+                            title: title,
+                            uuid: uuid
+                        });
+
+                    });
+
+                    this.taxonomy.categories = arrCol;
+                }
+
+            }
+
+            if(this.tags) {
+
+                var tagCollection;
+
+                try {
+                    tagCollection = JSON.parse(this.tags);
+                } catch (err) {
+                    tagCollection = this.tags;
+                } finally {
+
+                    var arrTagCol = [];
+
+                    _.each(tagCollection, function (tag) {
+                        arrTagCol.push(tag);
+                    });
+
+                    this.taxonomy.tags = arrTagCol;
+
+                }
+            }
+
+        },
+
         //*** overridden functions
 
         toJSON: function () {
@@ -250,6 +327,7 @@ module.exports = _.merge(_.cloneDeep(dataModel), {
             this.buildLinks();
             this.buildApiLinks();
             this.loadFeatures();
+            this.buildTaxonomy();
 
             var obj = this.toObject();
 

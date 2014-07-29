@@ -16,17 +16,14 @@ module.exports = _.merge(_.cloneDeep(appItemModel), {
 
         //indicate if the term is a clone of another this implies the uuid of the parent
         //must be used instead, therefore duplications of uuid possible
-        clone: {
+
+        cloned: {
             type: 'boolean',
             defaultsTo: false
         },
 
         clone_id: {
             type: 'integer'
-        },
-
-        code: {
-            type: 'string'
         },
 
         content_type: {
@@ -40,22 +37,15 @@ module.exports = _.merge(_.cloneDeep(appItemModel), {
             defaultsTo: false
         },
 
-        owner: {
+        node_path: {
+            type: 'array'
+        },
+
+        parent_node: {
             type: 'integer'
         },
 
-        parent: {
-            type: 'integer'
-        },
-
-
-        title: {
-
-            type: 'string',
-            required: true
-        },
-
-        views_count: {
+       usage_count: {
           type: 'integer',
           defaultsTo: 0
         },
@@ -108,8 +98,8 @@ module.exports = _.merge(_.cloneDeep(appItemModel), {
 
                 console.log('building category informatioin');
 
-                post.path = app.path + '/' + post.code; //slug to be created using eg. /2014/02/19/category/title/index.html
-                post.admin_path = app.admin_path + "/posts/{id}"
+              //  post.path = app.path + '/' + post.code; //slug to be created using eg. /2014/02/19/category/title/index.html
+              //  post.admin_path = app.admin_path + "/posts/{id}"
 
                 post.parent_application_alias = app.alias;
                 post.parent_application_feature = app.parent_application_feature.application_alias;
@@ -125,7 +115,7 @@ module.exports = _.merge(_.cloneDeep(appItemModel), {
 
     afterCreate: function ( newPost, next ) {
 
-        console.log('inside of after create for the yp post');
+/*        console.log('inside of after create for the yp post');
         Taxonomy.update({
             id: newPost.id
         }, {
@@ -135,7 +125,7 @@ module.exports = _.merge(_.cloneDeep(appItemModel), {
             if (err) return next(err);
 
             next();
-        });
+        });*/
 
 
     }

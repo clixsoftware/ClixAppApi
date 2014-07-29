@@ -88,20 +88,18 @@ module.exports = {
         }
 
         // console.log(query);
-        Patient.find(query)
+        Patients.find(query)
             .paginate({
                 page: page,
                 limit: limit
             })
-            .done(function(err, results){
+            .exec(function(err, results){
 
                 if(err) return res.json(err, 500);
 
-
-
                 if(results){
 
-                    Patient.count(query).exec(function(err, found){
+                    Patients.count(query).exec(function(err, found){
                         var ret = {
                             models: results,
                             total: found,

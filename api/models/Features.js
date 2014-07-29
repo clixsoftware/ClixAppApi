@@ -20,11 +20,6 @@ module.exports = _.merge(_.cloneDeep(baseModel), {
             unique: true
         },
 
-        description: {
-            type: 'string',
-            required: true
-        },
-
         icon: { //icon for the application
             type: 'string'
         },
@@ -34,21 +29,9 @@ module.exports = _.merge(_.cloneDeep(baseModel), {
             defaultsTo: false
         },
 
-        status: {
-            type: 'string',
-            defaultsTo: 'installed',
-            enum: ['installed', 'enabled', 'disabled']
-        },
-
         status_message: {
             type: 'string',
             defaultsTo: 'Feature is installed'
-        },
-
-        //what was this for.
-        share_id: {
-            type: 'integer',
-            defaultsTo: 0
         },
 
         uuid: { //guid of the record

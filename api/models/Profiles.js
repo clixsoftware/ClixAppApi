@@ -46,7 +46,7 @@ module.exports = _.merge(_.cloneDeep(appItemModel), {
             type: 'string'
         },
 
-        birthdate: {
+        birth_date: {
             type: 'date'
         },
 
@@ -56,14 +56,14 @@ module.exports = _.merge(_.cloneDeep(appItemModel), {
         },
 
         //Reporting options
-        daily_report_option: {    //receiveDailyReports = 1, receiveDailyReportsWeekend = 2
+/*        daily_report_option: {    //receiveDailyReports = 1, receiveDailyReportsWeekend = 2
             type: 'integer'
         },
 
         daily_report_sort: {  //values workspace, date
             type: 'string',
             defaultsTo: 'workspace'
-        },
+        },*/
 
         department: {
             type: 'string'
@@ -73,10 +73,10 @@ module.exports = _.merge(_.cloneDeep(appItemModel), {
             type: 'string'
         },
 
-
+/*
         facebook: {
             type: 'string'
-        },
+        }*/
 
         fax: {
             type: 'string'
@@ -90,9 +90,11 @@ module.exports = _.merge(_.cloneDeep(appItemModel), {
         gender: {
           type: 'string'
         },
+/*
         googleplus: {
             type: 'string'
         },
+*/
 
         home_phone: {
             type: 'string'
@@ -115,13 +117,13 @@ module.exports = _.merge(_.cloneDeep(appItemModel), {
         },
 
         //instant messaging
-        im_name: {
+/*        im_name: {
             type: 'string'
         },
 
         im_service: {
             type: 'string'
-        },
+        },*/
 
         interests: {
             type: 'string'
@@ -134,10 +136,12 @@ module.exports = _.merge(_.cloneDeep(appItemModel), {
         last_name: {
             type: 'string'
         },
+/*
 
         linkedin: {
             type: 'string'
         },
+*/
 
         manager: {
             model: 'profiles'
@@ -181,10 +185,12 @@ module.exports = _.merge(_.cloneDeep(appItemModel), {
         picture_url: {
             type: 'string'
         },
+/*
 
         pinterest: {
             type: 'string'
         },
+*/
 
         prefix: {
             type: 'string',
@@ -195,9 +201,9 @@ module.exports = _.merge(_.cloneDeep(appItemModel), {
             type: 'string'
         },
 
-        school: { //schools
+/*        school: { //schools
             type: 'string'
-        },
+        },*/
 
         skills: { //array of skills
             type: 'string'
@@ -207,9 +213,9 @@ module.exports = _.merge(_.cloneDeep(appItemModel), {
             type: 'string'
         },
 
-        twitter_name: {
+/*        twitter_name: {
             type: 'string'
-        },
+        },*/
 
         website: {
             type: 'string'
@@ -217,10 +223,6 @@ module.exports = _.merge(_.cloneDeep(appItemModel), {
 
         work_email: {
             type: 'string'
-            //required: true,
-            //unique: true,
-            //email: true
-
         },
 
         work_ext: {
@@ -295,6 +297,8 @@ module.exports = _.merge(_.cloneDeep(appItemModel), {
 
         },
 
+
+
         toJSON: function () {
 
 
@@ -314,6 +318,26 @@ module.exports = _.merge(_.cloneDeep(appItemModel), {
 
     },
 
+    createUser: function(id, cb){
+
+        Profiles.findOne(id)
+            .exec(function(err, profile){
+                if(err) return cb(err);
+
+                if(!profile) return cb(new Error('Profile not found'));
+
+                Users.create({
+                    title: profile.title,
+                    username: profile.work_email,
+                    email: profile.work_email,
+                    password: 'password'
+                }).exec(function(err, created_user){
+                    if(err) return cb(err);
+
+                    return cb(created_user);
+                })
+            })
+    },
     //*** Model Callbacks
 
     // Lifecycle Callbacks
