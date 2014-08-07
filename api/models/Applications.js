@@ -279,7 +279,7 @@ module.exports = _.merge(_.cloneDeep(dataModel), {
                       //  console.log(token);
                         var id = token[0].trim();
                         var info = token[1].split('|');
-                        var title = info[0];
+                        var title = info[0].trim();
                         var uuid = info[1];
                         var url = id + '-' + title.replace(/ /g, '-');
 
