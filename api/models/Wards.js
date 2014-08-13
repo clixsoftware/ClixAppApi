@@ -5,83 +5,127 @@
  * @docs        :: http://sailsjs.org/#!documentation/models
  */
 
-var contentModel = require('../services/model/contentModel');  //inherit from the base model
+var appItemModel = require('../services/model/appItemModel');  //inherit from the base model
 var _ = require('lodash');
 var uuid = require('uuid-v4');
 var moment = require('moment');
-var Q = require('q');
 
-module.exports = _.merge(_.cloneDeep(contentModel), {
+module.exports = _.merge(_.cloneDeep(appItemModel), {
 
-    tableName: 'content',
+    connection: 'hmisDevelopment',
 
     attributes: {
 
+        beds: {
+            type: 'integer'
+        },
+
+        beds_occupied: {
+            type: 'integer'
+        },
+
+        code: {
+            type: 'string'
+        },
+
         content_type: {
             type: 'string',
-            defaultsTo: 'News Post'
+            enum: ['ward', 'department']
+         },
+
+        manager: {
+            type: 'integer'
         },
 
-        description: {
-            type: 'string',
-            required: 'true'
+        location: {
+          type: 'string'
         },
 
-        short_title: {
-            type: 'string',
-            required: 'true'
+        profile: {
+            type: 'integer'
         },
 
-        buildPath: function() {
-            this.path =  '/' + this.parent_application_feature + '/'  + this.parent_application_alias + '/' + this.feature_alias + '/' +  this.id + '-' +   this.title.toLowerCase().split(' ').join('-');;
+        status: {
+            type: 'integer'
+        },
+
+        views_count: {
+            type: 'integer',
+            defaultsTo: 0
+        },
+
+        votes_count: {
+            type: 'integer',
+            defaultsTo: 0
+        },
+
+
+        buildLinks: function () {
+
+            this.urls = {
+                edit: {
+                    href: this.path + '/edit',
+                    title: 'Edit Feature',
+                    description: 'Click to edit this feature'
+                },
+
+                show: {
+                    href: this.path + '/index.html',
+                    title: 'Feature Manager Home',
+                    description: 'Go to directory manager home'
+                }
+            };
+
+
+            return;
+
+
+        },
+
+        toJSON: function () {
+
+
+            this.buildLinks();
+            var obj = this.toObject();
+
+            return obj;
+
         }
+
+
 
     },
 
     // Lifecycle Callbacks
     beforeCreate: function (post, next) {
 
+
         Applications.findOne(post.parent_application)
-
             .populate('parent_application_feature')
+            .then(function(app){
 
-            .then(function (app) {
-
-                console.log('building post informatioin');
-
-              //  var mDate = moment().format('YYYY/MM/DD');
-
-              //  post.path = app.path + '/{id}/' + post.short_title.toLowerCase().split(' ').join('-');
-              //  post.admin_path = app.admin_path + "/posts/{id}";
-
-                post.feature_alias = 'news';
-                post.parent_application_alias = app.alias;
-                post.parent_application_feature = app.parent_application_feature.application_alias;
+                post.admin_path = '/backoffice/hmis/wards/{id}';
+                post.uuid = uuid();
+                post.path = app.path + "/wards/" +  post.code;
 
                 console.log(post);
-                post.uuid = uuid();
                 next();
 
-            });
-
-        // Create new user password before create
+            })
 
     },
 
     afterCreate: function (newPost, next) {
 
-/*        console.log('inside of after create for the news post');
-
-        Newspost.update({
+        Wards.update({
             id: newPost.id
         }, {
-            admin_path: newPost.admin_path.replace('{id}', newPost.id),
-            path: newPost.path.replace('{id}', newPost.id)
+            admin_path: newPost.admin_path.replace('{id}', newPost.id)
         }, function (err, success) {
             if (err) return next(err);
 
-             next();
-        });*/
+            next();
+        });
 
     }
 

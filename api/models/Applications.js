@@ -219,7 +219,12 @@ module.exports = _.merge(_.cloneDeep(dataModel), {
 
         buildLinks: function () {
 
-            this.path =  '/' + this.app_alias  + '/'  +  this.alias;
+            if(this.parent_application){
+                this.path =  '/' +  this.alias + '/' + this.app_alias;
+            }else{
+                this.path =  '/' + this.app_alias  + '/'  +  this.alias;
+            }
+
 
             var url = '/admin/features/feature/' + this.id;
 
@@ -243,7 +248,8 @@ module.exports = _.merge(_.cloneDeep(dataModel), {
                 },
 
                 friendly: {
-                    href: this.path + '/index.html',
+                    //href: this.path + '/index.html',
+                    href: this.path,
                     title: this.title,
                     description: this.description
                 }

@@ -5,29 +5,85 @@
  * @docs        :: http://sailsjs.org/#!documentation/models
  */
 
-var contentModel = require('../services/model/contentModel');  //inherit from the base model
+var appItemModel = require('appItemModel');  //inherit from the base model
 var _ = require('lodash');
 var uuid = require('uuid-v4');
 var moment = require('moment');
 
-module.exports = _.merge(_.cloneDeep(contentModel), {
+module.exports = _.merge(_.cloneDeep(appItemModel), {
 
     attributes: {
-
-
-        approved_by: {
-            type: 'integer'
+        //form to be used
+        content: {
+          type: 'string'
         },
 
         content_type: {
             type: 'string',
-            enum: ['Blog Post'],
-            defaultsTo: 'Blog Post'
+            enum: ['service request'],
+            defaultsTo: 'service request'
         },
 
-        is_featured: {
+        //custom form trigger
+        form_trigger_load: {
+            type: 'string',
+            defaultsTo: 'services:submit:common'
+        },
+
+        form_trigger_submit: {
+            type: 'string',
+            defaultsTo: 'services:submit:common'
+        },
+
+        help:{
+            model: 'howdois'
+        },
+
+        metadata: {
             type: 'boolean',
-            defaultsTo: false
+            defaultsTo: true
+        },
+
+        service_code: {
+            type: 'string'
+        },
+
+        service_type: {
+            type: 'string',
+            enum: ['realtime', 'batch', 'blackbox'],
+            defaults: 'realtime'
+        },
+        sla: {
+            type: 'integer',
+            defaultsTo: 7
+
+        },
+
+        sla_reminder: {
+            type: 'integer',
+            defaultsTo: 3
+        },
+
+        status: {
+          type: 'integer',
+          defaultsTo: 0
+
+        },
+
+        views_count: {
+            type: 'integer',
+            defaultsTo: 0
+
+        },
+
+        votes_count: {
+            type: 'integer',
+            defaultsTo: 0
+
+        },
+
+        work_unit: {
+            model: 'profiles'
         },
 
         title: {
@@ -36,6 +92,7 @@ module.exports = _.merge(_.cloneDeep(contentModel), {
             required: true
         },
 
+/*
         published_status: function () {
             if (this.status & HelperService.postStatus.published) {
                 return 'Published';
@@ -43,6 +100,8 @@ module.exports = _.merge(_.cloneDeep(contentModel), {
 
             return 'Waiting';
         },
+*/
+
 
         buildLinks: function () {
 
@@ -77,34 +136,30 @@ module.exports = _.merge(_.cloneDeep(contentModel), {
         }
 
 
+
     },
 
     // Lifecycle Callbacks
     beforeCreate: function (post, next) {
 
+console.log(post.parent_application);
 
         Applications.findOne(post.parent_application)
-            .populate('parent_application_feature')
+            .populate('parent_feature')
             .then(function (app) {
 
-                console.log('building post informatioin');
+                console.log(app);
 
-                var mDate = moment().format('YYYY/MM/DD');
-
-                var slug = '/{id}/' +  mDate + '/' + post.short_title.toLowerCase().split(' ').join('-');
-                //post.slug = '/{id}/' + post.short_title.toLowerCase().split(' ').join('-');
-                post.path = app.path + slug; //slug to be created using eg. /2014/02/19/category/title/index.html
-                post.admin_path = app.admin_path + "/posts/{id}";
+                post.path = app.path +'/{id}/' + post.title.toLowerCase().split(' ').join('-');
+                post.admin_path = app.admin_path + "/posts/{id}"
 
                 post.parent_application_alias = app.alias;
-                post.parent_application_feature = app.parent_application_feature.application_alias;
+                post.parent_application_feature = app.parent_feature.application_alias;
 
-                console.log(post);
                 post.uuid = uuid();
                 next();
 
             });
-
         // Create new user password before create
 
     },
@@ -113,12 +168,13 @@ module.exports = _.merge(_.cloneDeep(contentModel), {
 
         console.log('inside of after create for the news post');
 
-        Blogposts.update({
+        Service.update({
             id: newPost.id
         }, {
             admin_path: newPost.admin_path.replace('{id}', newPost.id),
             path: newPost.path.replace('{id}', newPost.id)
         }, function (err, success) {
+
             if (err) return next(err);
 
              next();
@@ -126,4 +182,5 @@ module.exports = _.merge(_.cloneDeep(contentModel), {
 
     }
 
- });
+
+});

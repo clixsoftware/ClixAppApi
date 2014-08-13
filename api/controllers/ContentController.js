@@ -1,25 +1,46 @@
 /**
- * NewspostController.js
+ * FrontPageController.js
  *
  * @description ::
  * @docs        :: http://sailsjs.org/#!documentation/controllers
  */
 
-
-var Q = require('q');
-var _ = require('lodash');
-var uuid = require('uuid-v4');
-var moment = require('moment');
 var actionUtil = require('../../node_modules/sails/lib/hooks/blueprints/actionUtil');
 var util = require('util');
+var url = require('url');
+var _ = require('lodash');
+var Q = require('q');
 
 module.exports = {
 
+    //get the feature manager
+    getManager: function(req, res){
+
+        var criteria = actionUtil.parseCriteria(req);
+
+        Features.findOne({
+            application_alias: criteria.feature_alias
+        }).exec(function(err, success){
+
+            if(err) return res.json(err, 500);
+
+            return res.json(success);
+        })
+    },
+
+    //return all the applications
     index: function ( req, res ) {
+
+        console.log('inside the index function');
+        console.log(req.params.feature_alias);
+
+       if(req.params.feature_alias === 'content'){
+           return this.find(req, res);
+       }
 
         Applications.find({
             app_alias: _moduleData.application_alias
-        }).done(function(err, success){
+        }).exec(function(err, success){
 
             if(err) return res.json(err, 500);
 
@@ -27,44 +48,127 @@ module.exports = {
         })
     },
 
-    //Install the feature
-    installFeature: function ( req, res ) {
-        var errors = [];
+    addTerms: function (req, res) {
 
-        Features.create(_moduleData)
-            .then(function(feature){
-                return res.json(feature, 201);
-            })
-            .fail(function(error){
-                return res.json(error, 500);
-            });
-    },
+        console.log('addTerms to Content');
 
-    //get the feature information
-    getFeature: function(req, res){
-        Features.findOne({
-            application_alias: _moduleData.application_alias
-        }).done(function(err, success){
+        var terms = req.param('terms');
+        var contentId = req.param('id');
 
-            if(err) return res.json(err, 500);
-
-            return res.json(success);
-        })
-    },
-
-    //*** SERVICES ***/
-    findServices: function findRecords (req, res) {
-
-        console.log('Inside the findServices');
+        //console.log(req);
         console.log(req.params);
-        console.log(req.options);
-        console.log(actionUtil.parseCriteria(req));
+        console.log(req.query);
 
-        var Model = Services;
+        var col = terms.split(',');
+
+        Taxonomy.find({
+            id: col
+        }).exec(function (err, terms){
+
+            if(err) {res.json(err)};
+
+
+            if(terms){
+                var counter = 0;
+                var termString = [];
+                // var termString = "";
+
+                _.forEach(terms, function(term){
+                    termString.push(    term.id+ ';# ' + term.title + '|' + term.uuid);
+                })
+
+                Content.update({
+                    id: contentId
+                }, {
+                    categories: termString
+                }).exec(function(err, posts){
+                    return res.json(posts[0]);
+                });
+
+            }else{
+
+                res.json({});
+
+            }
+
+
+
+        });
+
+    },
+
+    addTags: function (req, res) {
+
+        var terms = req.param('tags');
+        var contentId = req.param('id');
+
+        var col = terms.split(',');
+
+        Taxonomy.find({
+            title: col
+        }).exec(function (err, terms){
+
+            if(err) {res.json(err)};
+
+            console.log(terms);
+
+            if(terms){
+                var counter = 0;
+                var termString = [];
+
+                _.forEach(terms, function(term){
+                    termString.push( term.title);
+                })
+
+                Content.update({
+                    id: contentId
+                }, {
+                    tags: termString
+                }).exec(function(err, posts){
+                    return res.json(posts[0]);
+                });
+
+            }else{
+                res.json({});
+            }
+
+
+
+        });
+
+    },
+
+    find: function findRecords (req, res) {
+
+        console.log('Inside the Content Find');
+        console.log(req.params);
+/*        console.log( url.parse(req.url));
+        console.log( url.parse(req.url).path.split('/'));*/
+        // Look up the model
+        // var Model = actionUtil.parseModel(req);
+
         var criteria = actionUtil.parseCriteria(req);
+
+        console.log(req.options);
+
+        var Model = req._sails.models[req.params.feature_alias];
+
+        console.log(req.params.feature_alias );
+
+
+        if(req.params.feature_alias === 'content'){
+             criteria = _.omit(criteria, 'feature_alias');
+        }
+
+
         if(_.has(req.params, "parent_application")){
             criteria.parent_application = req.params.parent_application;
         };
+
+        console.log(criteria);
+
+
+        if ( !Model ) throw new Error(util.format('Invalid route option, "model".\nThis is not a valid content model: `%s`', criteria.feature_alias));
 
         var paging = {
             limit: actionUtil.parseLimit(req),
@@ -104,7 +208,7 @@ module.exports = {
             //Check if only requesting one record
             if(!req.param('id')){
 
-                return res.ok(matchingRecords);
+                    return res.ok(matchingRecords);
 
             }else{
 
@@ -139,18 +243,23 @@ module.exports = {
 
     },
 
-    searchServices: function findRecords (req, res) {
+    search: function findRecords (req, res) {
 
 
-        console.log('Inside the findServices');
+        console.log('Inside the Content Search');
         console.log(req.params);
-        console.log(req.options);
-        console.log(actionUtil.parseCriteria(req));
+        /*        console.log( url.parse(req.url));
+         console.log( url.parse(req.url).path.split('/'));*/
+        // Look up the model
+        // var Model = actionUtil.parseModel(req);
 
-        var Model = Services;
         var criteria = actionUtil.parseCriteria(req);
 
-/*        criteria.feature_alias = req.params.feature_alias;*/
+        console.log(req.options);
+
+        var Model = req._sails.models[req.params.feature_alias];
+
+        criteria.feature_alias = req.params.feature_alias;
 
         if(_.has(req.params, "parent_application")){
             criteria.parent_application = req.params.parent_application;
@@ -158,6 +267,8 @@ module.exports = {
 
         console.log(criteria);
 
+
+        if ( !Model ) throw new Error(util.format('Invalid route option, "model".\nThis is not a valid content model: `%s`', criteria.feature_alias));
 
         var paging = {
             limit: actionUtil.parseLimit(req),
@@ -196,176 +307,79 @@ module.exports = {
 
             var postsLength = matchingRecords.length - 1;
 
-            Model.count(criteria).exec(function (err, found) {
+            matchingRecords.forEach(function(post, i){
+                console.log('item - ' + i);
 
-                var ret = {
-                    models: matchingRecords,
-                    total: found,
-                    page: paging.skip ? paging.skip + 1 : 0,
-                    limit: paging.limit ? paging.limit : 0
-                };
+                console.log(post.id);
 
-                return res.json(ret);
+                Model.find()
+                    .where({parent_node: post.id})
+                    .exec(function(err, children){
+                    // console.log('ofund children');
+                    //console.log(children);
+                    matchingRecords[i].children = children;
+                        if (i >= postsLength) {
+
+                            console.log('sending data;')
+                            Model.count(criteria).exec(function (err, found) {
+
+                                var ret = {
+                                    models: matchingRecords,
+                                    total: found,
+                                    page: paging.skip ? paging.skip + 1 : 0,
+                                    limit: paging.limit ? paging.limit : 0
+                                };
+
+                                return res.json(ret);
+
+
+                            });
+
+                        }
+                });
+
+
+
+
 
 
             });
 
+            //Get the Count of the records
 
 
         });
 
     },
-    //Get all services for an Application
-    getServices: function(req, res){
+    //create a new post
+    create: function(req, res){
 
-        Services.find({
-            parent_application: req.param('id')
-        }).exec(function(err, posts){
+        console.log(req.params.all());
+        var Model = req._sails.models[req.params.feature_alias];;
 
-            if(err) return res.json(err, 500);
+        // Create data object (monolithic combination of all parameters)
+        // Omit the blacklisted params (like JSONP callback param, etc.)
+        var data = actionUtil.parseValues(req);
 
-            if(posts){
-                return res.json(posts);
-            }else{
-                return res.json({}, 404);
-            }
+        /*        if(req.user && req.user.id){
+         data.creator = req.user.id;
+         }*/
 
+        // Create new instance of model using data from params
+        Model.create(data).exec(function created (err, newInstance) {
+            if (err) return res.negotiate(err);
 
+            res.status(201);
+            res.json(newInstance.toJSON());
         });
-    },
-
-    getService: function(req, res){
-
-
-        Services.findOne({
-            id: req.param('id')
-        }).exec(function(err, post){
-
-            if(err){
-                return res.json(err, 500);
-            }
-
-            if(post){
-                return res.json(post);
-            }
-        })
-    },
-
-    //create a new post for an application
-    createService: function(req, res){
-
-        var  post_record = {};
-        post_record.title = req.param('title');
-        post_record.description = req.param('description');
-        post_record.content = req.param('content');
-        post_record.service_code = req.param('service_code');
-        post_record.service_type = req.param('service_type');
-        post_record.form_trigger_load = req.param('form_trigger_load');
-        post_record.form_trigger_submit = req.param('form_trigger_submit');
-
-        //auto
-        post_record.parent_application = req.param('id');
-
-        console.log(post_record);
-
-
-        Services.create(post_record)
-            .then(function(created_record){
-                return res.json(created_record, 201);
-            })
-            .fail(function(error){
-                return res.json(error, 500);
-            });
 
 
     },
 
+    update: function(req, res){
 
-    //Tickets
-
-    getTickets: function(req, res){
-
-        Tickets.find({
-            parent_application: req.param('id')
-        }).done(function(err, posts){
-
-            if(err) return res.json(err, 500);
-
-            if(posts){
-                return res.json(posts);
-            }else{
-                return res.json({}, 404);
-            }
-
-
-        });
-    },
-
-    createTicket: function(req, res){
-
-        var ticket = {
-            title:  req.param('title'),
-            parent_application:  req.param('parent_application'),
-            parent_application_alias:  req.param('parent_application_alias'),
-            parent_application_feature:  req.param('parent_application_feature'),
-            service:  req.param('service'),
-            due_date: req.param('due_date'),
-            support_queue: req.param('support_queue'),
-            content: req.param('content'),
-            content_type: req.param('content_type'),
-            ip: req.ip,
-            status: 0,
-            custom_fields:req.param('custom_fields'),
-            requestor_name:  req.param('requestor_name'),
-            requestor_email:  req.param('requestor_email'),
-        };
-        /*JSON.parse(req.param('custom_fields'))*/
-        console.log('inside support request');
-        console.log(ticket);
-/*
-        if(req.param('title')){
-            support.title = req.param('title');
-        }
-*/
-
-        //console.log(JSON.parse(req.param('other')));
-
-
-/*        Q(Applications.findOne({
-            app_alias: 'support',
-            alias: 'global'
-        })).then(function(app){
-
-                support.parent_application = app.id;
-                support.parent_application_alias = app.alias;
-                support.parent_application_feature = _moduleData.application_alias;
-
-                 return support;
-
-            })
-            .then(function(support_post){*/
-
-                Tickets.create(ticket)
-                    .then(function(model){
-
-                        console.log('model returned ');
-                        //return res.json(model);
-                        console.log(req.path);
-                        console.log(req.url);
-
-                        return res.json(model);
-                    })
-                    .fail(function(error){
-                        console.log(error);
-                        return res.json(error, 500);
-                    });
-
-/*            });*/
-   },
-
-    updateTicket: function(req, res) {
         // Look up the model
-        var Model = Tickets;
+        var Model = Content;
 
         // Locate and validate the required `id` parameter.
         var pk = actionUtil.requirePk(req);
@@ -394,7 +408,7 @@ module.exports = {
             if (!matchingRecord) return res.notFound();
 
             // dont change user password in user edit
-           // values.password = matchingRecord.password;
+            values.password = matchingRecord.password;
 
             Model.update(pk, values).exec(function updated(err, records) {
 
@@ -435,13 +449,14 @@ module.exports = {
                 res.ok(updatedRecord);
             });// </updated>
         }); // </found>
+
     }
 
 };
 
 var _moduleData = {
-    title: 'Support Manager',
-    description: 'Support Manager',
-    application_alias: 'support'
+    title: 'Content Manager',
+    description: 'Manages the home page of the intranet',
+    application_alias: 'classifieds'
 
 };

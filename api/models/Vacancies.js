@@ -1,7 +1,7 @@
 /**
- * Newspost.js
+ * Vacancy.js
  *
- * @description :: Creates posts for the NewsManager data is saved in the cotent table.
+ * @description :: TODO: Job vacancies with the organization.
  * @docs        :: http://sailsjs.org/#!documentation/models
  */
 
@@ -9,7 +9,6 @@ var contentModel = require('../services/model/contentModel');  //inherit from th
 var _ = require('lodash');
 var uuid = require('uuid-v4');
 var moment = require('moment');
-var Q = require('q');
 
 module.exports = _.merge(_.cloneDeep(contentModel), {
 
@@ -17,30 +16,25 @@ module.exports = _.merge(_.cloneDeep(contentModel), {
 
     attributes: {
 
+/*   custom_fields: {
+            closing_date: 8/21/2014',
+            education_level: 'Professional',
+            career_level: clerk,
+             work_unit: 'Finance',
+            hr_contact: {
+                email: 'organizer@email.com',
+                phone: '87655555'
+            }
+        },*/
+
         content_type: {
             type: 'string',
-            enum: ['incident-item', 'service-item'],
-            defaultsTo: 'service-item'
-        },
-
-        description: {
-            type: 'string',
-            required: 'true'
-        },
-
-        short_title: {
-            type: 'string',
-            required: 'true'
+            enum: ['job-post'],
+            defaultsTo: 'job-post'
         },
 
         buildPath: function() {
-            this.path = this.feature_alias + '/'  + this.parent_application_alias + '/'  +  this.id + '-' +   this.title.toLowerCase().split(' ').join('-');
-
-            this.form_triggers = {
-                create: 'service:' + this.custom_fields.service_data.code.replace('-', '_') + ':new',
-                edit: 'service:' + this.custom_fields.service_data.code.replace('-', '_') + ':edit'
-            };
-
+            this.path =  '/' + this.parent_application_feature + '/'  + this.parent_application_alias + '/' + this.feature_alias + '/' +  this.id + '-' +   this.title.toLowerCase().split(' ').join('-');
         }
 
     },
@@ -67,6 +61,7 @@ module.exports = _.merge(_.cloneDeep(contentModel), {
             });
 
     }
+
 
 
 });

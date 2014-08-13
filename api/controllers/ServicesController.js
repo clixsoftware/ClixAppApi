@@ -4,34 +4,17 @@
  * @description ::
  * @docs        :: http://sailsjs.org/#!documentation/controllers
  */
+var contentController = require('./ContentController');
+var actionUtil = require('../../node_modules/sails/lib/hooks/blueprints/actionUtil');
+var util = require('util');
 
-module.exports = {
+module.exports = _.merge(_.cloneDeep(contentController), {
 
-    search: function(req, res){
+});
 
-        var query = require('url').parse(req.url, true).query;
-
-        console.log(query);
-
-
-        var search = {};
-
-        if(_.has(query, 'criterion')){
-            search.title = {
-                'contains': req.param('criterion')
-            };
-
-
-        }
-        console.log(search);
-
-        Service.find(search)
-            .done(function(err, success){
-                if(err) return res.json(err, 500);
-
-                return res.json(success);
-            })
-    }
+var _moduleData = {
+    title: 'Services Manager',
+    description: 'Manages the service application and forms of the intranet',
+    application_alias: 'services'
 
 };
-

@@ -12,7 +12,7 @@ var uuid = require('uuid-v4')
 
 module.exports = {
 
-     search: function(req, res){
+    search: function(req, res){
 
         var query = require('url').parse(req.url, true).query;
 
@@ -30,7 +30,7 @@ module.exports = {
         }
         console.log(search);
 
-        Project.find(search)
+        Service.find(search)
             .done(function(err, success){
                 if(err) return res.json(err, 500);
 

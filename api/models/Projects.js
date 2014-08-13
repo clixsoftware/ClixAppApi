@@ -1,7 +1,7 @@
 /**
- * Newspost.js
+ * Projects.js
  *
- * @description :: Creates posts for the NewsManager data is saved in the cotent table.
+ * @description :: Creates posts for the Project Manager data is saved in the cotent table.
  * @docs        :: http://sailsjs.org/#!documentation/models
  */
 
@@ -19,28 +19,11 @@ module.exports = _.merge(_.cloneDeep(contentModel), {
 
         content_type: {
             type: 'string',
-            enum: ['incident-item', 'service-item'],
-            defaultsTo: 'service-item'
-        },
-
-        description: {
-            type: 'string',
-            required: 'true'
-        },
-
-        short_title: {
-            type: 'string',
-            required: 'true'
+            defaultsTo: 'project'
         },
 
         buildPath: function() {
-            this.path = this.feature_alias + '/'  + this.parent_application_alias + '/'  +  this.id + '-' +   this.title.toLowerCase().split(' ').join('-');
-
-            this.form_triggers = {
-                create: 'service:' + this.custom_fields.service_data.code.replace('-', '_') + ':new',
-                edit: 'service:' + this.custom_fields.service_data.code.replace('-', '_') + ':edit'
-            };
-
+            this.path =  this.feature_alias + '/'  + this.parent_application_alias + '/'  +  this.id + '-' +   this.title.toLowerCase().split(' ').join('-');
         }
 
     },

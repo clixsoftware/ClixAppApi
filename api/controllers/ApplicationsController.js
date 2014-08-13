@@ -12,6 +12,7 @@ module.exports = {
 
     find: function (req, res) {
 
+        console.log('API: Applicatons: find');
         // Look up the model
         var Model = Applications;
 
@@ -22,12 +23,17 @@ module.exports = {
             skip:   actionUtil.parseSkip(req)
         };
 
+        var criteria = actionUtil.parseCriteria(req);
+        console.log(criteria);
+
         // Lookup for records that match the specified criteria
         var query = Model.find()
             .where( actionUtil.parseCriteria(req) )
             .limit( actionUtil.parseLimit(req) )
             .skip( actionUtil.parseSkip(req) )
             .sort( actionUtil.parseSort(req) );
+
+        console.log(query);
 
         // TODO: .populateEach(req.options);
         //query = actionUtil.populateEach(query, req.options);
@@ -50,6 +56,7 @@ module.exports = {
                 });
 
             }
+            console.log(matchingRecords);
 
             //Check if only requesting one record
             if(!req.param('id')){
@@ -106,20 +113,23 @@ module.exports = {
         }
         // return res.json({hi: ''});*/
 
-    getApplication: function(req, res){
+    findOne: function(req, res){
 
-        console.log('get application');
+        console.log('API: Applicatons: getApplication');
+        var criteria = actionUtil.parseCriteria(req);
+        console.log(criteria);
+
         var query = require('url').parse(req.url,true).query;
 
-
         console.log(query);
-
-
-        Applications.findOne({
+/*
+        {
             parent_feature: req.param('feature_id'),
-            alias:  req.param('alias')
+                alias:  req.param('alias')
 
-        }).exec(function(err, success){
+        }
+*/
+        Applications.findOne(criteria).exec(function(err, success){
 
                 if (err ) return res.json(err, 500);
 

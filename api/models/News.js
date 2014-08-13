@@ -19,8 +19,7 @@ module.exports = _.merge(_.cloneDeep(contentModel), {
 
         content_type: {
             type: 'string',
-            enum: ['incident-item', 'service-item'],
-            defaultsTo: 'service-item'
+            defaultsTo: 'news-post'
         },
 
         description: {
@@ -34,13 +33,7 @@ module.exports = _.merge(_.cloneDeep(contentModel), {
         },
 
         buildPath: function() {
-            this.path = this.feature_alias + '/'  + this.parent_application_alias + '/'  +  this.id + '-' +   this.title.toLowerCase().split(' ').join('-');
-
-            this.form_triggers = {
-                create: 'service:' + this.custom_fields.service_data.code.replace('-', '_') + ':new',
-                edit: 'service:' + this.custom_fields.service_data.code.replace('-', '_') + ':edit'
-            };
-
+            this.path =  '/' + this.parent_application_feature + '/'  + this.parent_application_alias + '/' + this.feature_alias + '/' +  this.id + '-' +   this.title.toLowerCase().split(' ').join('-');;
         }
 
     },
@@ -50,14 +43,14 @@ module.exports = _.merge(_.cloneDeep(contentModel), {
 
         Applications.findOne(post.parent_application)
 
-            .populate('parent_feature')
+            .populate('parent_application_feature')
 
             .then(function (app) {
 
                 console.log('Update Post before Create');
 
                 post.parent_application_alias = app.alias;
-                post.parent_application_feature = app.parent_feature.application_alias;
+                post.parent_application_feature = app.parent_application_feature.application_alias;
 
                 post.uuid = uuid();
                 console.log(post);

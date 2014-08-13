@@ -37,57 +37,12 @@ module.exports.routes = {
   // against Sails route blueprints.  See `config/blueprints.js` for configuration options
   // and examples.
 
-    //CONTENT
-
-    //get all posts, includes search criteria
-    'get /api/v1/content': {
-        controller: 'content',
-        action: 'find'
+    //SYSTEM SETTINGS
+    // get the feature information
+    'get /api/v1/settings/current': {
+        controller: 'settings',
+        action: 'current'
     },
-
-    //create a new post
-    'post /api/v1/content': {
-        controller: 'content',
-        action: 'create'
-    },
-
-    //create a new post
-    'get /api/v1/content/search': {
-        controller: 'content',
-        action: 'search'
-    },
-
-    //add taxonomy tags  to a item
-    'post  /api/v1/content/:id/tags': {
-        controller: 'content',
-        action: 'addTags'
-    },
-
-    //add taxonomy terms to a item
-    'post  /api/v1/content/:id/terms': {
-        controller: 'content',
-        action: 'addTerms'
-    },
-
-    //get posts for application with :id, includes search criteria
-    'get /api/v1/content/apps/:parent_application/posts': {
-        controller: 'content',
-        action: 'find'
-    },
-
-    //get single post with the :postId
-    'get /api/v1/content/:id': {
-        controller: 'content',
-        action: 'find'
-    },
-
-    //update post with the :postId
-    'put  /api/v1/content/:id': {
-        controller: 'content',
-        action: 'update'
-    },
-
-
 
     //IMAGES
     //install the feature
@@ -198,127 +153,8 @@ module.exports.routes = {
         action: 'getEntriesByAlias'
     },
 
-
-    //NEWS MANAGER
-
-    //get all posts, includes search criteria
-    'get /api/v1/news/posts': {
-        controller: 'news',
-        action: 'findPosts'
-    },
-
-    //create a new post
-    'post /api/v1/news/posts': {
-    controller: 'news',
-    action: 'createPost'
-    },
-
-    //create a new post
-    'get /api/v1/news/posts/search': {
-        controller: 'news',
-        action: 'searchPosts'
-    },
-    //get single post with the :postId
-    'get /api/v1/news/posts/:id': {
-        controller: 'news',
-        action: 'findPosts'
-    },
-
-    //update post with the :postId
-    'put  /api/v1/news/posts/:id': {
-        controller: 'news',
-        action: 'updatePost'
-    },
-
-    //create a new application
-    'post /api/v1/news': {
-        controller: 'news',
-        action: 'create'
-    },
-
-    //feature
-    //get the feature manager
-    'get /api/v1/news/manager': {
-        controller: 'news',
-        action: 'getManager'
-    },
-
-    //install the feature manager
-    'post /api/v1/news/manager': {
-        controller: 'news',
-        action: 'install'
-    },
-
-    //get posts for application with :id, includes search criteria
-    'get /api/v1/news/:parent_application/posts': {
-        controller: 'news',
-        action: 'findPosts'
-    },
-
-    //get application with the :id
-    'get /api/v1/news/:id': {
-        controller: 'news',
-        action: 'find'
-    },
-
-    //Calendar MANAGER
-
-    //get all posts, includes search criteria
-    'get /api/v1/calendar/posts': {
-        controller: 'calendar',
-        action: 'findPosts'
-    },
-
-    //create a new post
-    'post /api/v1/calendar/posts': {
-        controller: 'calendar',
-        action: 'createPost'
-    },
-
-    //get single post with the :postId
-    'get /api/v1/calendar/posts/:id': {
-        controller: 'calendar',
-        action: 'findPosts'
-    },
-
-    //update post with the :postId
-    'put  /api/v1/calendar/posts/:id': {
-        controller: 'calendar',
-        action: 'updatePost'
-    },
-
-    //create a new application
-    'post /api/v1/calendar': {
-        controller: 'calendar',
-        action: 'create'
-    },
-
-    //feature
-    //get the feature manager
-    'get /api/v1/calendar/manager': {
-        controller: 'calendar',
-        action: 'getManager'
-    },
-
-    //install the feature manager
-    'post /api/v1/calendar/manager': {
-        controller: 'calendar',
-        action: 'install'
-    },
-
-    //get posts for application with :id, includes search criteria
-    'get /api/v1/calendar/:parent_application/posts': {
-        controller: 'calendar',
-        action: 'findPosts'
-    },
-
-    //get application with the :id
-    'get /api/v1/calendar/:id': {
-        controller: 'calendar',
-        action: 'find'
-    },
-
     //CLASSIFIEDS MANAGER
+
 
     //get all posts, includes search criteria
     'get /api/v1/classifieds/posts': {
@@ -332,18 +168,17 @@ module.exports.routes = {
         action: 'createPost'
     },
 
+    //update the specified post
     'put /api/v1/classifieds/posts': {
         controller: 'classifieds',
         action: 'updatePost'
     },
 
-
-    //create a new post
+    //search for posts
     'get /api/v1/classifieds/posts/search': {
         controller: 'classifieds',
         action: 'searchPosts'
     },
-
 
     //get single post with the :postId
     'get /api/v1/classifieds/posts/:id': {
@@ -352,7 +187,7 @@ module.exports.routes = {
     },
 
     //update post with the :postId
-      'put  /api/v1/classifieds/posts/:id': {
+    'put  /api/v1/classifieds/posts/:id': {
         controller: 'classifieds',
         action: 'updatePost'
     },
@@ -363,7 +198,6 @@ module.exports.routes = {
         action: 'create'
     },
 
-    //feature
     //get the feature manager
     'get /api/v1/classifieds/manager': {
         controller: 'classifieds',
@@ -388,80 +222,6 @@ module.exports.routes = {
         action: 'find'
     },
 
-/*
-
-
-
-
-    //delete post with the :postId
-    'delete /api/v1/news/posts/:postId': {
-        controller: 'news',
-        action: 'deletePost'
-    },*/
-
-    //HOW DO I  MANAGER
-
-    //install the feature
-    'post /api/v1/yp/feature': {
-        controller: 'yp',
-        action: 'installFeature'
-    },
-
-    // get the feature information
-    'get /api/v1/yp/feature': {
-        controller: 'yp',
-        action: 'getFeature'
-    },
-
-    //get all the posts for the news id
-    'get /api/v1/yp/:id/posts': {
-        controller: 'yp',
-        action: 'getPosts'
-    },
-
-    //create a new post for the id
-    'post /api/v1/yp/:id/posts': {
-        controller: 'yp',
-        action: 'createPost'
-    },
-
-    //Get Posts using the Feature Alias 'sites' and the Application Alias 'default'
-    'get /api/v1/yp/posts/:feature_alias/:application_alias': {
-        controller: 'yp',
-        action: 'getPostsByAlias'
-    },
-
-    //HOW DO I
-    //Add a category to the how do I post
-    'put /api/v1/howdois/category/:id': {
-        controller: 'howdois',
-        action: 'addCategory'
-    },
-
-    //Add a category to the how do I post
-    'get /api/v1/howdois/category/:id': {
-        controller: 'howdois',
-        action: 'getPostsByCategory'
-    },
-
-
-    //Add a category to the how do I post
-    'get /api/v1/howdois/tracker/:id': {
-        controller: 'howdois',
-        action: 'getById'
-    },
-
-    //Add a category to the how do I post
-    'get /api/v1/howdois/recent': {
-        controller: 'howdois',
-        action: 'getRecent'
-    },
-
-    //Add a category to the how do I post
-    'get /api/v1/howdois/mostactive': {
-        controller: 'howdois',
-        action: 'getMostActive'
-    },
 
     //TAXONOMY MANAGER
 
@@ -486,9 +246,9 @@ module.exports.routes = {
 
     //APPLICATIONS MANAGER
 
-    'get /api/v1/applications/app/:feature_id/:alias': {
+    'get /api/v1/applications/app/:parent_feature/:alias': {
         controller: 'applications',
-        action: 'getApplication'
+        action: 'findOne'
     },
 
     'post  /api/v1/applications/:id/tags': {
@@ -548,31 +308,6 @@ module.exports.routes = {
         action: 'getByAlias'
     },
 
-    //PROJECTS MANAGER
-
-    //install the feature
-    'post /api/v1/projects/feature': {
-        controller: 'projects',
-        action: 'installFeature'
-    },
-
-    // get the feature information
-    'get /api/v1/projects/feature': {
-        controller: 'projects',
-        action: 'getFeature'
-    },
-
-    //get all the posts for the news id
-    'get /api/v1/projects/:id/entries': {
-        controller: 'projects',
-        action: 'getProjects'
-    },
-
-    //create a new post for the id
-    'post /api/v1/projects/:id/entries': {
-        controller: 'projects',
-        action: 'createProject'
-    },
 
     //SUPPORT MANAGER
 
@@ -589,13 +324,25 @@ module.exports.routes = {
     },
 
     //get all the services for the support application
-    'get /api/v1/support/apps/:id/services': {
+    'get /api/v1/support/:parent_application/services': {
         controller: 'support',
-        action: 'getServices'
+        action: 'findServices'
     },
 
+    'get /api/v1/support/:parent_application/services/search': {
+        controller: 'support',
+        action: 'searchServices'
+    },
+
+    //get all the services for the support application
+    'get /api/v1/support/:parent_application/services/:id': {
+        controller: 'support',
+        action: 'findServices'
+    },
+
+
     //create a new service record for the support application
-    'post /api/v1/support/apps/:id/services': {
+    'post /api/v1/support/apps/:parent_application/services': {
         controller: 'support',
         action: 'createService'
     },
@@ -624,74 +371,148 @@ module.exports.routes = {
         action: 'getService'
     },
 
-     //BLOGS MANAGER
-
-    //install the feature
-    'post /api/v1/blogs/feature': {
-        controller: 'blogs',
-        action: 'installFeature'
+    //ADS
+    'get /api/v1/ads/random': {
+        controller: 'ads',
+        action: 'randomOne'
     },
 
-    // get the feature information
-    'get /api/v1/blogs/feature': {
-        controller: 'blogs',
-        action: 'getFeature'
+
+//CONTENT
+
+  /*  //get all posts, includes search criteria
+*//*    'get /api/v1/content': {
+        controller: 'content',
+        action: 'find'
+    },*//*
+
+    //create a new post
+    'post /api/v1/content': {
+        controller: 'content',
+        action: 'create'
     },
 
-    //get all the posts for the news id
-    'get /api/v1/blogs/:id/posts': {
-        controller: 'blogs',
-        action: 'getBlogPosts'
+*//*    //Search the content
+    'get /api/v1/content/search': {
+        controller: 'content',
+        action: 'search'
+    },*//*
+
+    //add taxonomy tags  to a item
+    'post  /api/v1/content/:id/tags': {
+        controller: 'content',
+        action: 'addTags'
     },
 
-    //get all the posts for the news id
-    'get /api/v1/blogs/:id/recent': {
-        controller: 'blogs',
-        action: 'getBlogRecentPosts'
+    //add taxonomy terms to a item
+    'post  /api/v1/content/:id/terms': {
+        controller: 'content',
+        action: 'addTerms'
     },
 
-    //create a new post for the id
-    'post /api/v1/blogs/:id/posts': {
-        controller: 'blogs',
-        action: 'createBlogPost'
+    //get posts for application with :id, includes search criteria
+    'get /api/v1/content/apps/:parent_application/posts': {
+        controller: 'content',
+        action: 'find'
     },
 
-    //Get Posts using the Feature Alias 'sites' and the Application Alias 'default'
-    'get /api/v1/blogs/applications/:feature_alias/:application_alias': {
-        controller: 'blogs',
-        action: 'getBlogsByAppAlias'
+*//*    //get single post with the :postId
+    'get /api/v1/content/:id': {
+        controller: 'content',
+        action: 'find'
+    },*//*
+
+    //update post with the :postId
+    'put  /api/v1/content/:id': {
+        controller: 'content',
+        action: 'update'
+    },*/
+
+    //MODULES INHERITING FROM CONTENT
+
+    //get all posts for a specific content feature e.g. all news post , includes search criteria
+    'get /api/v1/:feature_alias/posts': {
+        controller: 'content',
+        action: 'find'
     },
 
-    //PAGES MANAGER
-
-    //install the feature
-    'post /api/v1/pages/feature': {
-        controller: 'pages',
-        action: 'installFeature'
+    //Search all posts for the feature
+    'get /api/v1/:feature_alias/posts/search': {
+        controller: 'content',
+        action: 'search'
     },
 
-    // get the feature information
-    'get /api/v1/pages/feature': {
-        controller: 'pages',
-        action: 'getFeature'
+
+    //Search all posts for the an application
+    'get /api/v1/:feature_alias/:parent_application/:content_type/posts': {
+        controller: 'content',
+        action: 'search'
     },
 
-    //get all the posts for the news id
-    'get /api/v1/pages/:id/posts': {
-        controller: 'pages',
-        action: 'getPagePosts'
+    'get /api/v1/:feature_alias/:parent_application/:content_type/:parent_node/posts': {
+        controller: 'content',
+        action: 'search'
     },
 
-    //create a new post for the id
-    'post /api/v1/pages/:id/posts': {
-        controller: 'pages',
-        action: 'createPagePost'
+    //Search all posts for the an application
+    'get /api/v1/:feature_alias/:parent_application/posts/search': {
+        controller: 'content',
+        action: 'search'
     },
 
-    //Get Posts using the Feature Alias 'sites' and the Application Alias 'default'
-    'get /api/v1/pages/applications/:feature_alias/:application_alias': {
-        controller: 'pages',
-        action: 'getAppByAppAlias'
-    }
+    //add taxonomy tags  to a item
+    'post  /api/v1/:feature_alias/:parent_application/posts/:id/tags': {
+        controller: 'content',
+        action: 'addTags'
+    },
+
+    //add taxonomy terms to a item
+    'post  /api/v1/:feature_alias/:parent_application/posts/:id/terms': {
+        controller: 'content',
+        action: 'addTerms'
+    },
+
+    //create a new post
+    'post /api/v1/:feature_alias/:parent_application/posts': {
+        controller: 'content',
+        action: 'create'
+    },
+
+    //get posts for application with :id, includes search criteria
+    'get /api/v1/:feature_alias/:parent_application/posts': {
+        controller: 'content',
+        action: 'find'
+    },
+
+    //get posts for application with :id, includes search criteria
+    'put /api/v1/:feature_alias/:parent_application/posts': {
+        controller: 'content',
+        action: 'update'
+    },
+
+    //get single post with the :postId
+    'get /api/v1/:feature_alias/:parent_application/posts/:id': {
+        controller: 'content',
+        action: 'find'
+    },
+
+    //update the specified post
+    'put /api/v1/:feature_alias/:parent_application/posts/:id': {
+        controller: 'content',
+        action: 'update'
+    },
+
+    //get the feature manager
+    'get /api/v1/:feature_alias/manager': {
+        controller: 'content',
+        action: 'getManager'
+    }/*,
+
+    //get application with the :id
+    'get /api/v1/:feature_alias/:id': {
+        controller: 'content',
+        action: 'find'
+    }*/
+
 
 };
